@@ -8,19 +8,15 @@ class Location:
     lat: float
     lon: float
 
-    def distance_calc(
-        self, destination: "Location"
-    ) -> (float):  # Haversine formula in km
+    # Haversine formula in km
+    def distance_calc(self, destination: "Location") -> (float):
         lat1 = self.lat
         lat2 = destination.lat
         lon1 = self.lon
         lon2 = destination.lon
         p = pi / 180
-        a = (
-            0.5
-            - cos((lat2 - lat1) * p) / 2
-            + cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2
-        )
+        a = (0.5 - cos((lat2 - lat1) * p) / 2
+            + cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2)
         return 12742 * asin(sqrt(a))  # 2*Earth_R*asin...
 
 
@@ -36,9 +32,8 @@ class Passenger:
                 )
         return print("All passengers are healthy. Airplane is ready to go.")
 
-    def __init__(
-        self, location, healthy
-    ):  # constructor to test difference when using print
+    # constructor to test difference when using print
+    def __init__(self, location, healthy):
         self.location = location
         self.healthy = healthy
 
@@ -64,10 +59,7 @@ class Airplane:
     healthy = True
 
     def fly(self, destination):
-        self.fuel_tank = (
-            self.fuel_tank
-            - self.location.distance_calc(destination) * self.fuel_consumption
-        )
+        self.fuel_tank = (self.fuel_tank - self.location.distance_calc(destination) * self.fuel_consumption)
         self.location = destination
         self.pilot1.location = destination
         for passenger in self.passengers:
