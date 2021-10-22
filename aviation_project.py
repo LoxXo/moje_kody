@@ -15,8 +15,11 @@ class Location:
         lon1 = self.lon
         lon2 = destination.lon
         p = pi / 180
-        a = (0.5 - cos((lat2 - lat1) * p) / 2
-            + cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2)
+        a = (
+            0.5
+            - cos((lat2 - lat1) * p) / 2
+            + cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2
+        )
         return 12742 * asin(sqrt(a))  # 2*Earth_R*asin...
 
 
@@ -59,7 +62,10 @@ class Airplane:
     healthy = True
 
     def fly(self, destination):
-        self.fuel_tank = (self.fuel_tank - self.location.distance_calc(destination) * self.fuel_consumption)
+        self.fuel_tank = (
+            self.fuel_tank
+            - self.location.distance_calc(destination) * self.fuel_consumption
+        )
         self.location = destination
         self.pilot1.location = destination
         for passenger in self.passengers:
