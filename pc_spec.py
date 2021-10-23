@@ -91,7 +91,7 @@ class Memory(Component, Power):
     def frequency(self):
         return self.__max_frequency
 
-    @frequency.setter ## jest chujowo bo daje najwyzsza wartosc zawsze niezaleznie od zalenosci
+    @frequency.setter 
     def frequency(self, mobo_freq: int):
         self.__max_frequency = min(self.__stock_frequency, mobo_freq)
 
@@ -137,9 +137,7 @@ class Motherboard(PCIe, Component, Power):
     @property
     def memory_size(self):
         return sum([mem.mem_size for mem in self.__ram_slots if mem is not None])
-        # for  in self.__ram_slots:
-        #     if self.__ram_slots[] == None
-        
+
 # class Intel_Motherboard(Motherboard):
 
 #     pass
