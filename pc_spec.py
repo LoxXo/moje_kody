@@ -126,7 +126,7 @@ class Motherboard(PCIe, Component, Power):
 
     def insert_RAM(self, ram: Memory, slot: int):
         if len(self.__ram_slots) < slot:
-            raise RuntimeError("Nie mozesz wsadzic do tego slota, on nie istnieje")
+            raise RuntimeError("Nie mozesz wsadzic do tego slota, on nie istnieje i nie moze cie skrzywdzic")
         if self.__ram_slots[slot] is not None:
             raise RuntimeError("Slot jest zajety")
         
