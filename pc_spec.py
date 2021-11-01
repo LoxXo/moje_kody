@@ -169,13 +169,17 @@ class Motherboard(PCIe, Component, Power):
         return sum([mem.mem_size for mem in self.__ram_slots if mem is not None])
 
 
-class PC(Motherboard, CPU, Memory, Hard_drive, PCIe, GPU):
+class PC:
     __running = False
     __components_connected = List[None]
+    
+    def __init__(self, cpu) #motherboard powinien miec wszystkie elementy w sobie i tylko pc zczytuje z niego
+        pc_cpu
 
     #zebrać is_connected komponentów do listy, a potem sprawdzić czy wszystkie są True
     def run_PC(self):
         
+        self.__components_connected = [CPU.__is_connected, Memory.__is_connected]
 
         if all(self.__components_connected):
             self.__running = True
