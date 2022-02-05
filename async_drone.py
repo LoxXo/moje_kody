@@ -1,4 +1,5 @@
 import asyncio
+from asyncore import loop
 import threading
 from asyncio import sleep, current_task
 from dataclasses import dataclass
@@ -50,24 +51,29 @@ async def update_altimeter(a: Altitude):
         await sleep(0.5)
 
 
-async def stabilize_drone(d: Pos, a: Altitude):
+async def stabilize_drone(d: Pos, a: Altitude, z):
     log("drone stabilization initiated")
     while True:
+        # for i in range(100):
         log(f"stabilizing... at: x={d.x},{d.y}")
         log(f"keeping altitude at: h={a.h}")
+        z[0] += 1
         await sleep(0.01)
 
 
 async def main_foo():
     st = ts()
     log(f"start -- na wątku {thread_name()}")
+    z = [0]
     d = Pos(0, 0)
     a = Altitude(0)
     asyncio.create_task(update_gps(d))
     asyncio.create_task(update_altimeter(a))
-    asyncio.create_task(stabilize_drone(d, a))
-    log(f"main -- done after {ts() - st:.3f}s")
+    asyncio.create_task(stabilize_drone(d, a, z))
     await sleep(2)
+    log(f"main -- done after {ts() - st:.3f}s | counter = {z}")
 
+
+# await main_foo() # dla jupytera, loopuje stabilizie_drone
 
 asyncio.run(main_foo())
