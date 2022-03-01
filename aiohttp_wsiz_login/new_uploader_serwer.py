@@ -1,4 +1,5 @@
 from asyncio import sleep
+from cgitb import html
 from fileinput import filename
 from genericpath import exists
 from importlib.resources import path
@@ -9,6 +10,7 @@ import ownershipstore
 from ownershipstore import OwnershipStore
 
 from aiohttp import request, web
+import aiohttp.hdrs
 from aiohttp.abc import BaseRequest
 from faker import Faker
 
@@ -70,40 +72,52 @@ async def serve_file(request: web.Request):
     return web.FileResponse(path)
 
 
-@routes.post("/upload")
+@routes.get("/upload")
+async def upload_file(req: web.Request):
+    # https://everything.curl.dev/http/multipart
+    return web.Response(
+        text="""<form action="upload" method="post" enctype="multipart/form-data">
+  Name: <input type="text" name="person"><br>
+  File: <input type="file" name="secret"><br>
+  <input type="submit" value="Submit">
+</form>""",
+        content_type="text/html",
+    )
+
+
+@routes.post("/upload")  # to do token
 async def accept_file(req: BaseRequest):
     """
     Funkcja przyjmująca upload pliku.
     """
     # https://docs.aiohttp.org/en/stable/web_quickstart.html#file-uploads
-    token: str = request.headers.get("token")
-    try:
-        await wd_login.UserService.get_user(token)
-    except:
-        raise web.HTTPUnauthorized()
-    print("file upload request hit...")
-    reader = await req.multipart()
-    field = await reader.next()
-    assert field.name == "file"
-    print(f"read field object: {field}")
-    filename = field.filename
-    # Cannot rely on Content-Length if transfer is chunked.
-    print(f"filename:{filename}")
-    filename = "images/" + filename
-    size = 0
-    with open(filename, "wb") as f:
-        file_as_bytes = b""
-        while True:
-            chunk = await field.read_chunk()  # 8192 bytes by default.
-            print(type(chunk))
-            if not chunk:
-                break
-            size += len(chunk)
-            file_as_bytes += chunk
-            # f.write(chunk)
-        f.write(file_as_bytes)
+    # token: str = request.headers.get("token")
+    # try:
+    #     await wd_login.UserService.get_user(token)
+    # except:
+    #     raise web.HTTPUnauthorized()
+    # print("file upload request hit...")
 
-    return web.json_response({"name": filename, "size": size})
+    reader = await req.multipart()
+    async for part in reader:
+        if part is None:
+            break
+        else:
+            print(f"part {part.name} content_type: {part.headers}")
+        # print(await part.text())
+        if part.name == "secret":
+            with open(part.filename, "wb") as wf:
+                file_as_bytes = b""
+                while True:
+                    chunk = await part.read_chunk()  # 8192 bytes by default.
+                    print(type(chunk))
+                    if not chunk:
+                        break
+                    # size += len(chunk)
+                    file_as_bytes += chunk
+                wf.write(file_as_bytes)
+
+    return web.json_response({"name": "dupa"})
 
 
 async def starter():
